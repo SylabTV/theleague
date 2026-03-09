@@ -1,0 +1,19 @@
+<h1>TOUT SUR LA LEAGUE</h1>
+
+<h2>LA TEAM À LA UNE</h2>
+<?php if (isset($team)): ?>
+    <img src="<?= htmlspecialchars($logo->getUrl()) ?>" alt="Logo">
+    <h3><?= htmlspecialchars($team->getName()) ?></h3>
+<?php endif; ?>
+
+<h2>LES PLAYERS À LA UNE</h2>
+<?php 
+// On limite à 3 joueurs max pour la Home
+$featured = array_slice($players, 0, 3); 
+foreach ($featured as $player): 
+?>
+    <article>
+        <img src="<?= is_array($player) ? htmlspecialchars($player['portrait']) : htmlspecialchars($player->getPortrait()) ?>" alt="Photo">
+        <h3><?= is_array($player) ? htmlspecialchars($player['nickname']) : htmlspecialchars($player->getNickname()) ?></h3>
+    </article>
+<?php endforeach; ?>

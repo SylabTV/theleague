@@ -1,0 +1,25 @@
+<h1>LES MATCHS DE LA LEAGUE</h1>
+
+<?php foreach ($games as $gameData): ?>
+    <article>
+        <div>
+            <img src="<?= $gameData['logo1'] ?>" alt="Logo Team 1">
+            <strong><?= htmlspecialchars($gameData['team1']) ?></strong>
+            
+            <span> VS </span>
+            
+            <strong><?= htmlspecialchars($gameData['team2']) ?></strong>
+            <img src="<?= $gameData['logo2'] ?>" alt="Logo Team 2">
+        </div>
+
+        <ul>
+            <li>Date : <?= htmlspecialchars($gameData['details']->getDate()) ?></li>
+            <li>Vainqueur : <strong><?= htmlspecialchars($gameData['winner']) ?></strong></li>
+        </ul>
+
+        <a href="index.php?route=game&id=<?= $gameData['details']->getId() ?>">
+            VOIR LES STATISTIQUES
+        </a>
+        <hr>
+    </article>
+<?php endforeach; ?>

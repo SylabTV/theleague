@@ -1,0 +1,15 @@
+<h1>LES PLAYERS DE LA LEAGUE</h1>
+
+<section class="players-list">
+    <?php foreach ($players as $playerData): ?>
+        <article>
+            <img src="<?= htmlspecialchars($playerData['portraitUrl']) ?>" alt="Portrait">
+            
+            <h2><?= htmlspecialchars($playerData['details']->getNickname()) ?></h2>
+            
+            <a href="index.php?route=player&id=<?= $playerData['details']->getId() ?>">
+                DÉCOUVREZ <?= htmlspecialchars($playerData['details']->getNickname()) ?>
+            </a>
+        </article>
+    <?php endforeach; ?>
+</section>

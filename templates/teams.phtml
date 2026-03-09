@@ -1,0 +1,15 @@
+<h1>LES TEAMS DE LA LEAGUE</h1>
+
+<?php foreach ($teams as $teamData): ?>
+    <article>
+        <img src="<?= htmlspecialchars($teamData['logoUrl']) ?>" alt="Logo">
+        
+        <h2><?= htmlspecialchars($teamData['details']->getName()) ?></h2>
+        
+        <p><?= htmlspecialchars($teamData['details']->getDescription()) ?></p>
+        
+        <a href="index.php?route=team&id=<?= $teamData['details']->getId() ?>">
+            DÉCOUVREZ <?= htmlspecialchars($teamData['details']->getName()) ?>
+        </a>
+    </article>
+<?php endforeach; ?>

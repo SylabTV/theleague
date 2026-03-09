@@ -1,0 +1,17 @@
+<h1>LES PERFORMANCES</h1>
+<table>
+    <thead>
+        <tr>
+            <th>POINTS</th>
+            <th>ASSISTS</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($performances as $perf): ?>
+            <tr>
+                <td><?= htmlspecialchars($perf->getPoints()) ?></td>
+                <td><?= htmlspecialchars($perf->getAssists()) ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
