@@ -2,58 +2,46 @@
 
 class PlayerManager extends AbstractManager
 {
-    public function create(Player $player) : Player
+    public function findAll(): array
     {
-        $sql = "INSERT INTO players (nickname, bio, portrait, team) VALUES (:nickname, :bio, :portrait, :team)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "nickname" => $player->getNickname(),
-            "bio" => $player->getBio(),
-            "portrait" => $player->getPortrait(),
-            "team" => $player->getTeam()
-        ]);
-        $player->setId((int)$this->db->lastInsertId());
-        return $player;
-    }
-
-    public function update(Player $player) : Player
-    {
-        $sql = "UPDATE players SET nickname = :nickname, bio = :bio, portrait = :portrait, team = :team WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "nickname" => $player->getNickname(),
-            "bio" => $player->getBio(),
-            "portrait" => $player->getPortrait(),
-            "team" => $player->getTeam(),
-            "id" => $player->getId()
-        ]);
-        return $player;
-    }
-
-    public function delete(Player $player) : void
-    {
-        $sql = "DELETE FROM players WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $player->getId()]);
-    }
-
-    public function findOne(int $id) : ?Player
-    {
-        $sql = "SELECT * FROM players WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $id]);
-        $data = $stmt->fetch();
-        if(!$data) return null;
-        return new Player($data["nickname"], $data["bio"], (int)$data["portrait"], (int)$data["team"], (int)$data["id"]);
-    }
-
-    public function findAll() : array
-    {
-        $sql = "SELECT * FROM players";
-        $stmt = $this->db->query($sql);
+        $query = $this->db->prepare('SELECT * FROM players');
+        $query->execute();
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
         $players = [];
-        while($data = $stmt->fetch()) {
-            $players[] = new Player($data["nickname"], $data["bio"], (int)$data["portrait"], (int)$data["team"], (int)$data["id"]);
+
+        foreach ($results as $result) {
+            $player = new Player($result['nickname'], $result['bio'], $result['portrait'], $result['team']);
+            $player->setId($result['id']);
+            $players[] = $player;
+        }
+        return $players;
+    }
+
+    public function findOne(int $id): ?Player
+    {
+        $query = $this->db->prepare('SELECT * FROM players WHERE id = :id');
+        $query->execute(['id' => $id]);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            $player = new Player($result['nickname'], $result['bio'], $result['portrait'], $result['team']);
+            $player->setId($result['id']);
+            return $player;
+        }
+        return null;
+    }
+
+    public function findByTeam(int $teamId): array
+    {
+        $query = $this->db->prepare('SELECT * FROM players WHERE team = :team_id');
+        $query->execute(['team_id' => $teamId]);
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
+        $players = [];
+
+        foreach ($results as $result) {
+            $player = new Player($result['nickname'], $result['bio'], $result['portrait'], $result['team']);
+            $player->setId($result['id']);
+            $players[] = $player;
         }
         return $players;
     }

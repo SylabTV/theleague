@@ -3,6 +3,7 @@
 require "config/autoload.php";
 
 $router = new Router();
-$router->handleRequest();
+// On ajoute $_GET ici pour envoyer les données de l'URL au routeur
+$router->handleRequest($_GET);
 
 ?>

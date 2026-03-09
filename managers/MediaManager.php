@@ -2,54 +2,31 @@
 
 class MediaManager extends AbstractManager
 {
-    public function create(Media $media) : Media
+    public function findOne(int $id): ?Media
     {
-        $sql = "INSERT INTO media (url, alt) VALUES (:url, :alt)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "url" => $media->getUrl(),
-            "alt" => $media->getAlt()
-        ]);
-        $media->setId((int)$this->db->lastInsertId());
-        return $media;
-    }
+        $query = $this->db->prepare('SELECT * FROM media WHERE id = :id');
+        $query->execute(['id' => $id]);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
 
-    public function update(Media $media) : Media
-    {
-        $sql = "UPDATE media SET url = :url, alt = :alt WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "url" => $media->getUrl(),
-            "alt" => $media->getAlt(),
-            "id" => $media->getId()
-        ]);
-        return $media;
+        if ($result) {
+            $media = new Media($result['url'], $result['alt']);
+            $media->setId($result['id']);
+            return $media;
+        }
+        return null;
     }
-
-    public function delete(Media $media) : void
+    
+    public function findAll(): array
     {
-        $sql = "DELETE FROM media WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $media->getId()]);
-    }
-
-    public function findOne(int $id) : ?Media
-    {
-        $sql = "SELECT * FROM media WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $id]);
-        $data = $stmt->fetch();
-        if(!$data) return null;
-        return new Media($data["url"], $data["alt"], (int)$data["id"]);
-    }
-
-    public function findAll() : array
-    {
-        $sql = "SELECT * FROM media";
-        $stmt = $this->db->query($sql);
+        $query = $this->db->prepare('SELECT * FROM media');
+        $query->execute();
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
         $medias = [];
-        while($data = $stmt->fetch()) {
-            $medias[] = new Media($data["url"], $data["alt"], (int)$data["id"]);
+
+        foreach ($results as $result) {
+            $media = new Media($result['url'], $result['alt']);
+            $media->setId($result['id']);
+            $medias[] = $media;
         }
         return $medias;
     }

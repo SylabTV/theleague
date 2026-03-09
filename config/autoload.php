@@ -13,6 +13,7 @@ require "managers/PlayerPerformanceManager.php";
 require "managers/TeamManager.php";
 
 require "controllers/AbstractController.php";
+require "controllers/HomeController.php";
 require "controllers/GameController.php";
 require "controllers/MediaController.php";
 require "controllers/PlayerController.php";

@@ -2,58 +2,33 @@
 
 class TeamManager extends AbstractManager
 {
-    public function create(Team $team) : Team
+    public function findAll(): array
     {
-        $sql = "INSERT INTO teams (name, description, logo) VALUES (:name, :description, :logo)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "name" => $team->getName(),
-            "description" => $team->getDescription(),
-            "logo" => $team->getLogo()
-        ]);
-        $team->setId((int)$this->db->lastInsertId());
-        return $team;
-    }
-
-    public function update(Team $team) : Team
-    {
-        $sql = "UPDATE teams SET name = :name, description = :description, logo = :logo WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            "name" => $team->getName(),
-            "description" => $team->getDescription(),
-            "logo" => $team->getLogo(),
-            "id" => $team->getId()
-        ]);
-        return $team;
-    }
-
-    public function delete(Team $team) : void
-    {
-        $sql = "DELETE FROM teams WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $team->getId()]);
-    }
-
-    public function findOne(int $id) : ?Team
-    {
-        $sql = "SELECT * FROM teams WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(["id" => $id]);
-        $data = $stmt->fetch();
-        if(!$data) return null;
-        return new Team($data["name"], $data["description"], (int)$data["logo"], (int)$data["id"]);
-    }
-
-    public function findAll() : array
-    {
-        $sql = "SELECT * FROM teams";
-        $stmt = $this->db->query($sql);
+        $query = $this->db->prepare('SELECT * FROM teams');
+        $query->execute();
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
         $teams = [];
-        while($data = $stmt->fetch()) {
-            $teams[] = new Team($data["name"], $data["description"], (int)$data["logo"], (int)$data["id"]);
+
+        foreach ($results as $result) {
+            $team = new Team($result['name'], $result['description'], $result['logo']);
+            $team->setId($result['id']);
+            $teams[] = $team;
         }
         return $teams;
+    }
+
+    public function findOne(int $id): ?Team
+    {
+        $query = $this->db->prepare('SELECT * FROM teams WHERE id = :id');
+        $query->execute(['id' => $id]);
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            $team = new Team($result['name'], $result['description'], $result['logo']);
+            $team->setId($result['id']);
+            return $team;
+        }
+        return null;
     }
 }
 
